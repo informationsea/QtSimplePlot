@@ -18,6 +18,7 @@
 
 #include "spabstractplooter.h"
 
+#include <QDebug>
 #include <math.h>
 #include "simpleplotcommon.h"
 
@@ -26,15 +27,17 @@ SPAbstractPlooter::SPAbstractPlooter(QObject *parent) :
 {
 }
 
-qreal SPAbstractPlooter::baseUnit(qreal length)
+qreal SPAbstractPlooter::baseUnit(qreal length, int base)
 {
-#define BASE 5
-    int digit = round(log10(length)/log10(BASE));
-    return pow(BASE, digit-1);
+    if (length == 0)
+        return 1;
+    int digit = (int)(round(log10(length)/log10(base)));
+    //qDebug() << "baseUnit" << length << digit << pow(base, digit-1) << log10(length) << log10(base);
+    return pow(base, digit-1);
 }
 
 
-QRectF SPAbstractPlooter::plotRange(QRectF dr, QSize standard, double bottomMargin, double margin)
+QRectF SPAbstractPlooter::plotRange(QRectF dr, QSizeF standard, double bottomMargin, double margin)
 {
     QRectF newrect;
     newrect.setLeft(floor(dr.left()/standard.width())*standard.width() - standard.width()*margin);
@@ -47,9 +50,9 @@ QRectF SPAbstractPlooter::plotRange(QRectF dr, QSize standard, double bottomMarg
     return newrect;
 }
 
-QSize SPAbstractPlooter::baseUnit(QRectF rect)
+QSizeF SPAbstractPlooter::baseUnit(QRectF rect)
 {
-    return QSize(SPAbstractPlooter::baseUnit(rect.width()), SPAbstractPlooter::baseUnit(rect.height()));
+    return QSizeF(SPAbstractPlooter::baseUnit(rect.width()), SPAbstractPlooter::baseUnit(rect.height()));
 }
 
 
@@ -80,7 +83,7 @@ void SPAbstractPlooter::plotAxis(QPainter &painter, const SPScatterPlotterPlotIn
 
     painter.save();
     painter.rotate(-90);
-    painter.drawText(QRect(-info->plotArea.bottom(), info->plotArea.left()-40,
+    painter.drawText(QRect(-info->plotArea.bottom(), 0,
                            info->plotArea.height(), 20),
                      Qt::AlignCenter|Qt::AlignVCenter, ylabel);
     painter.restore();
@@ -100,12 +103,13 @@ void SPAbstractPlooter::plotGrid(QPainter &painter, const SPScatterPlotterPlotIn
 }
 
 
-SPScatterPlotterPlotInfo::SPScatterPlotterPlotInfo(QRectF dr, QRect area, double bottomMargin)
+SPScatterPlotterPlotInfo::SPScatterPlotterPlotInfo(QRectF dr, QRect area, double bottomMargin, double baseWidthScale)
 {
     dataRange = dr;
     base = SPAbstractPlooter::baseUnit(dataRange);
+    base.setWidth(base.width()*baseWidthScale);
     plotRange = SPAbstractPlooter::plotRange(dataRange, base, bottomMargin);
-    plotArea = QRect(area.topLeft() + QPoint(50,10),
+    plotArea = QRect(area.topLeft() + QPoint(60,10),
                      area.bottomRight() - QPoint(10, 50));
     xscale = (plotArea.width()-1)/plotRange.width();
     yscale = (plotArea.height()-1)/plotRange.height();

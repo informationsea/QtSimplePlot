@@ -29,9 +29,9 @@ public:
     QRectF dataRange;
     QRectF plotRange;
     QRect plotArea;
-    QSize base;
+    QSizeF base;
 
-    SPScatterPlotterPlotInfo(QRectF dataRange, QRect area, double bottomMargin = 1);
+    SPScatterPlotterPlotInfo(QRectF dataRange, QRect area, double bottomMargin = 1, double baseWidthScale = 1);
 };
 
 class SPAbstractPlooter : public QObject
@@ -42,9 +42,9 @@ public:
 
     virtual void plot(QPainter &painter, QRect area) const = 0;
 
-    static qreal baseUnit(qreal length);
-    static QSize baseUnit(QRectF rect);
-    static QRectF plotRange(QRectF dataRange, QSize standard, double bottomMargin = 1, double margin = 1);
+    static qreal baseUnit(qreal length, int base = 5);
+    static QSizeF baseUnit(QRectF rect);
+    static QRectF plotRange(QRectF dataRange, QSizeF standard, double bottomMargin = 1, double margin = 1);
 
 protected:
     void plotAxis(QPainter &painter, const SPScatterPlotterPlotInfo *info, QString xlabel, QString ylabel) const;

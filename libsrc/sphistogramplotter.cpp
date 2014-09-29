@@ -38,7 +38,7 @@ void SPHistogramPlotter::setData(QList<qreal> data)
     std::sort(m_data.begin(), m_data.end());
     m_maxvalue = m_data.last();
     m_minvalue = m_data.first();
-    m_interval = SPAbstractPlooter::baseUnit(m_maxvalue - m_minvalue);
+    m_interval = SPAbstractPlooter::baseUnit(m_maxvalue - m_minvalue)/2;
     m_plotmin = floor(m_minvalue/m_interval)*m_interval;
     m_plotmax = ceil(m_maxvalue/m_interval)*m_interval;
     int num = (int)((m_plotmax - m_plotmin)/m_interval);
@@ -48,11 +48,11 @@ void SPHistogramPlotter::setData(QList<qreal> data)
     for (int i = 1; i < num+1; ++i) {
         QList<qreal>::iterator nextit = std::upper_bound(lastit, m_data.end(), m_plotmin+i*m_interval);
         //qDebug() << i << nextit - lastit << m_plotmin+i*m_interval << m_interval;
-        m_frequency << nextit - lastit;
+        m_frequency << ((double)(nextit - lastit)/m_data.size());
         lastit = nextit;
     }
     m_freqmax = *std::max_element(m_frequency.begin(), m_frequency.end());
-    //qDebug() << m_frequency << m_freqmax;
+    qDebug() << m_frequency << m_freqmax;
 }
 
 void SPHistogramPlotter::setXLabel(QString xlabel)
@@ -62,9 +62,10 @@ void SPHistogramPlotter::setXLabel(QString xlabel)
 
 void SPHistogramPlotter::plot(QPainter &painter, QRect area) const
 {
-    SPScatterPlotterPlotInfo info(QRectF(m_plotmin, 0, m_maxvalue - m_minvalue, m_freqmax), area, 0);
+    SPScatterPlotterPlotInfo info(QRectF(m_minvalue, 0, m_maxvalue - m_minvalue, m_freqmax), area, 0, 0.5);
     //info.plotRange.setBottom(0);
-    plotAxis(painter, &info, m_xlabel, "Count");
+    qDebug() << m_interval << info.base;
+    plotAxis(painter, &info, m_xlabel, "Ratio");
 
     painter.save();
     painter.translate(info.plotArea.left(), info.plotArea.bottom());
@@ -78,8 +79,8 @@ void SPHistogramPlotter::plot(QPainter &painter, QRect area) const
 
 void SPHistogramPlotter::plotData(QPainter &painter, const SPScatterPlotterPlotInfo *info) const
 {
-    painter.setPen(Qt::blue);
-    painter.setBrush(QBrush(Qt::blue));
+    painter.setPen(Qt::black);
+    painter.setBrush(QBrush(QColor(0xA5, 0xEA, 0xFF, 0xff)));
     //qDebug() << m_frequency << m_frequency.size();
     for (int i = 0; i < m_frequency.size(); ++i) {
         painter.drawRect(QRectF((i*m_interval - info->plotRange.left() + m_plotmin)*info->xscale, 0,

@@ -34,6 +34,10 @@ public:
 
     virtual void plot(QPainter &painter, QRect area) const;
 
+    qreal plotMinimumValue() {return m_plotmin;}
+    qreal plotMaximumValue() {return m_plotmax;}
+    qreal plotInterval() {return m_interval;}
+
 signals:
 
 public slots:
@@ -43,14 +47,14 @@ private:
 
     QString m_xlabel;
     QList<qreal> m_data;
-    QList<int> m_frequency;
+    QList<qreal> m_frequency;
 
     qreal m_maxvalue;
     qreal m_minvalue;
     qreal m_interval;
     qreal m_plotmin;
     qreal m_plotmax;
-    int m_freqmax;
+    qreal m_freqmax;
 };
 
 #endif // SPHISTOGRAMPLOTTER_H
