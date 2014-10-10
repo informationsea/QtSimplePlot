@@ -34,7 +34,7 @@ public:
 
     virtual void plot(QPainter &painter, QRect area) const;
 
-    void setNumberOfBins(int num);
+    void setInterval(qreal interval);
     qreal plotMinimumValue() const {return m_plotmin;}
     qreal plotMaximumValue() const {return m_plotmax;}
     qreal plotInterval() const {return m_interval;}
@@ -44,14 +44,14 @@ signals:
 public slots:
 
 private:
-    void plotData(QPainter &painter, const SPScatterPlotterPlotInfo *info) const;
+    void plotData(QPainter &painter, QRectF area) const;
     void processData();
 
     QString m_xlabel;
     QList<qreal> m_data;
     QList<qreal> m_frequency;
 
-    int m_numberofbins;
+    qreal m_userInterval;
 
     qreal m_maxvalue;
     qreal m_minvalue;

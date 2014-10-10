@@ -48,3 +48,9 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_histSpinBox_valueChanged(qreal arg1)
+{
+    histogramPlotter.setInterval(arg1);
+    ui->widget_2->repaint();
+}

@@ -22,18 +22,6 @@
 #include <QObject>
 #include <QPainter>
 
-class SPScatterPlotterPlotInfo {
-public:
-    qreal xscale;
-    qreal yscale;
-    QRectF dataRange;
-    QRectF plotRange;
-    QRect plotArea;
-    QSizeF base;
-
-    SPScatterPlotterPlotInfo(QRectF dataRange, QRect area, double bottomMargin = 0, double baseWidthScale = 1);
-};
-
 class SPAbstractPlooter : public QObject
 {
     Q_OBJECT
@@ -41,14 +29,33 @@ public:
     explicit SPAbstractPlooter(QObject *parent = 0);
 
     virtual void plot(QPainter &painter, QRect area) const = 0;
-
     static qreal baseUnit(qreal length, int base = 5);
-    static QSizeF baseUnit(QRectF rect);
-    static QRectF plotRange(QRectF dataRange, QSizeF standard, double bottomMargin = 0., double margin = 0.);
+
+    QRectF plotRange() const {return m_plotRange;}
+    QRectF dataRange() const {return m_dataRange;}
+    QPointF majorTick() const {return m_majorTick;}
+
+    void setPlotRange(QRectF plotRange);
+    void setDataRange(QRectF dataRange, bool suggestParameters);
+    void setMajorTick(qreal x, qreal y);
 
 protected:
-    void plotAxis(QPainter &painter, const SPScatterPlotterPlotInfo *info, QString xlabel, QString ylabel) const;
-    void plotGrid(QPainter &painter, const SPScatterPlotterPlotInfo *info, double alpha = 1) const;
+    QPointF translatePoint(QPointF point, QRectF plotArea) const;
+
+    void plotAxis(QPainter &painter, QRectF plotArea, QString xlabel, QString ylabel) const;
+    void plotGrid(QPainter &painter, QRectF plotArea, double alpha = 1) const;
+
+private:
+    QRectF m_plotRange;
+    QRectF m_dataRange;
+    //QRectF m_plotArea;
+    QPointF m_majorTick;
+    //QPointF m_scale;
+
+    qreal m_marginLeft;
+    qreal m_marginRight;
+    qreal m_marginTop;
+    qreal m_marginBottom;
 
 signals:
 

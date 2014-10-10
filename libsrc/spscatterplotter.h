@@ -50,7 +50,7 @@ private:
     double m_alpha;
 
     static QRectF dataRange(const QList<QPointF> &data);
-    void plotData(QPainter &painter, const SPScatterPlotterPlotInfo *info) const;
+    void plotData(QPainter &painter, QRectF area) const;
 };
 
 #endif // SPSCATTERPLOTTER_H

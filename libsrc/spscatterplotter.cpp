@@ -34,6 +34,7 @@ SPScatterPlotter::SPScatterPlotter(QObject *parent) :
 void SPScatterPlotter::setData(QList<QPointF> data)
 {
     m_data = data;
+    setDataRange(dataRange(data), true);
 }
 
 void SPScatterPlotter::setXLabel(QString xlabel)
@@ -53,19 +54,9 @@ void SPScatterPlotter::setAlpha(double alpha)
 
 void SPScatterPlotter::plot(QPainter &painter, QRect area) const
 {
-    SPScatterPlotterPlotInfo info(dataRange(m_data), area);
-
-    painter.save();
-
-    plotAxis(painter, &info, m_xlabel, m_ylable);
-
-    painter.translate(info.plotArea.left(), info.plotArea.bottom());
-    painter.scale(1, -1);
-
-    plotGrid(painter, &info);
-    plotData(painter, &info);
-
-    painter.restore();
+    plotGrid(painter, area);
+    plotAxis(painter, area, m_xlabel, m_ylable);
+    plotData(painter, area);
 }
 
 QRectF SPScatterPlotter::dataRange(const QList<QPointF> &data)
@@ -84,15 +75,14 @@ QRectF SPScatterPlotter::dataRange(const QList<QPointF> &data)
 }
 
 
-void SPScatterPlotter::plotData(QPainter &painter, const SPScatterPlotterPlotInfo *info) const
+void SPScatterPlotter::plotData(QPainter &painter, QRectF area) const
 {
     QColor c(0x00, 0x66, 0xEB, 0xff*m_alpha);
 
     painter.setPen(c);
     painter.setBrush(QBrush(c));
     foreach (QPointF p, m_data) {
-        painter.drawEllipse(QPoint((p.x()-info->plotRange.left())*info->xscale,
-                                   (p.y()-info->plotRange.top())*info->yscale),
+        painter.drawEllipse(translatePoint(p, area),
                             3, 3);
     }
 }
