@@ -24,35 +24,15 @@
 #include "simpleplotcommon.h"
 
 SPHistogramPlotter::SPHistogramPlotter(QObject *parent) :
-    SPAbstractPlooter(parent), m_xlabel("X axis"), m_maxvalue(1), m_minvalue(0), m_interval(0.1), m_freqmax(1)
+    SPAbstractPlooter(parent), m_xlabel("X axis"), m_numberofbins(0),
+    m_maxvalue(1), m_minvalue(0), m_interval(0.1), m_freqmax(1)
 {
 }
 
 void SPHistogramPlotter::setData(QList<qreal> data)
 {
     m_data = data;
-
-    if (m_data.size() == 0)
-        return;
-
-    std::sort(m_data.begin(), m_data.end());
-    m_maxvalue = m_data.last();
-    m_minvalue = m_data.first();
-    m_interval = SPAbstractPlooter::baseUnit(m_maxvalue - m_minvalue)/2;
-    m_plotmin = floor(m_minvalue/m_interval)*m_interval;
-    m_plotmax = ceil(m_maxvalue/m_interval)*m_interval;
-    int num = (int)((m_plotmax - m_plotmin)/m_interval);
-
-    QList<qreal>::iterator lastit = m_data.begin();
-    m_frequency.clear();
-    for (int i = 1; i < num+1; ++i) {
-        QList<qreal>::iterator nextit = std::upper_bound(lastit, m_data.end(), m_plotmin+i*m_interval);
-        //qDebug() << i << nextit - lastit << m_plotmin+i*m_interval << m_interval;
-        m_frequency << ((double)(nextit - lastit)/m_data.size());
-        lastit = nextit;
-    }
-    m_freqmax = *std::max_element(m_frequency.begin(), m_frequency.end());
-    qDebug() << m_frequency << m_freqmax;
+    processData();
 }
 
 void SPHistogramPlotter::setXLabel(QString xlabel)
@@ -77,6 +57,12 @@ void SPHistogramPlotter::plot(QPainter &painter, QRect area) const
     painter.restore();
 }
 
+void SPHistogramPlotter::setNumberOfBins(int num)
+{
+    m_numberofbins = num;
+    processData();
+}
+
 void SPHistogramPlotter::plotData(QPainter &painter, const SPScatterPlotterPlotInfo *info) const
 {
     painter.setPen(Qt::black);
@@ -86,4 +72,34 @@ void SPHistogramPlotter::plotData(QPainter &painter, const SPScatterPlotterPlotI
         painter.drawRect(QRectF((i*m_interval - info->plotRange.left() + m_plotmin)*info->xscale, 0,
                                 m_interval*info->xscale, m_frequency[i]*info->yscale));
     }
+}
+
+void SPHistogramPlotter::processData()
+{
+    if (m_data.size() == 0)
+        return;
+
+    std::sort(m_data.begin(), m_data.end());
+    m_maxvalue = m_data.last();
+    m_minvalue = m_data.first();
+    if (m_numberofbins > 0) {
+        m_interval = (m_maxvalue - m_minvalue)/m_numberofbins;
+        m_plotmin = m_minvalue - m_interval;
+        m_plotmax = m_maxvalue + m_interval;
+    } else {
+        m_interval = SPAbstractPlooter::baseUnit(m_maxvalue - m_minvalue)/2;
+        m_plotmin = floor(m_minvalue/m_interval)*m_interval;
+        m_plotmax = ceil(m_maxvalue/m_interval)*m_interval;
+    }
+    int num = (int)((m_plotmax - m_plotmin)/m_interval);
+
+    QList<qreal>::iterator lastit = m_data.begin();
+    m_frequency.clear();
+    for (int i = 1; i < num+1; ++i) {
+        QList<qreal>::iterator nextit = std::upper_bound(lastit, m_data.end(), m_plotmin+i*m_interval);
+        //qDebug() << i << nextit - lastit << m_plotmin+i*m_interval << m_interval;
+        m_frequency << ((double)(nextit - lastit)/m_data.size());
+        lastit = nextit;
+    }
+    m_freqmax = *std::max_element(m_frequency.begin(), m_frequency.end());
 }
