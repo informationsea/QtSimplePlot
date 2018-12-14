@@ -21,7 +21,7 @@
 #include <QDebug>
 
 SimplePlotWidget::SimplePlotWidget(QWidget *parent) :
-    QWidget(parent), m_plotter(0)
+    QWidget(parent), m_plotter(nullptr)
 {
 }
 
@@ -30,9 +30,9 @@ void SimplePlotWidget::setPlotter(const SPAbstractPlooter *plotter)
     m_plotter = plotter;
 }
 
-void SimplePlotWidget::paintEvent(QPaintEvent */*event*/)
+void SimplePlotWidget::paintEvent(QPaintEvent *)
 {
-    if (m_plotter == 0)
+    if (m_plotter == nullptr)
         return;
     QPainter p(this);
 

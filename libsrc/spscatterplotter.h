@@ -29,7 +29,7 @@ class SPScatterPlotter : public SPAbstractPlooter
 {
     Q_OBJECT
 public:
-    explicit SPScatterPlotter(QObject *parent = 0);
+    explicit SPScatterPlotter(QObject *parent = nullptr);
 
     void setData(QList<QPointF> data);
     void setXLabel(QString xlabel);

@@ -27,7 +27,7 @@ class SPHistogramPlotter : public SPAbstractPlooter
 {
     Q_OBJECT
 public:
-    explicit SPHistogramPlotter(QObject *parent = 0);
+    explicit SPHistogramPlotter(QObject *parent = nullptr);
 
     void setData(QList<qreal> data);
     void setXLabel(QString xlabel);

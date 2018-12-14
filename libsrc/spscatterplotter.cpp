@@ -77,7 +77,7 @@ QRectF SPScatterPlotter::dataRange(const QList<QPointF> &data)
 
 void SPScatterPlotter::plotData(QPainter &painter, QRectF area) const
 {
-    QColor c(0x00, 0x66, 0xEB, 0xff*m_alpha);
+    QColor c(0x00, 0x66, 0xEB, static_cast<int>(0xff*m_alpha));
 
     painter.setPen(c);
     painter.setBrush(QBrush(c));

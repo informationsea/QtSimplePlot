@@ -23,15 +23,15 @@
 #include "simpleplotcommon.h"
 
 SPAbstractPlooter::SPAbstractPlooter(QObject *parent) :
-    QObject(parent), m_marginLeft(70), m_marginBottom(60), m_marginRight(20), m_marginTop(20)
+    QObject(parent), m_marginLeft(70), m_marginRight(20), m_marginTop(20), m_marginBottom(60)
 {
 }
 
 qreal SPAbstractPlooter::baseUnit(qreal length, int base)
 {
-    if (length == 0)
+    if (length <= 0)
         return 1;
-    int digit = (int)(round(log10(length)/log10(base)));
+    int digit = static_cast<int>(round(log10(length)/log10(base)));
     //qDebug() << "baseUnit" << length << digit << pow(base, digit-1) << log10(length) << log10(base);
     return pow(base, digit-1);
 }
@@ -87,8 +87,8 @@ void SPAbstractPlooter::plotAxis(QPainter &painter, QRectF plotArea, QString xla
     painter.drawRect(QRectF(translatePoint(m_plotRange.topLeft(), plotArea),
                             translatePoint(m_plotRange.bottomRight(), plotArea)));
 
-    int tickLeftIndex = ceil(m_plotRange.left()/m_majorTick.x());
-    int tickRightIndex = floor(m_plotRange.right()/m_majorTick.x());
+    int tickLeftIndex = static_cast<int>(ceil(m_plotRange.left()/m_majorTick.x()));
+    int tickRightIndex = static_cast<int>(floor(m_plotRange.right()/m_majorTick.x()));
 
     for (int i = tickLeftIndex; i <= tickRightIndex; ++i) {
         QPointF p = translatePoint(QPointF(i*m_majorTick.x(), m_plotRange.top()), plotArea);
@@ -102,8 +102,8 @@ void SPAbstractPlooter::plotAxis(QPainter &painter, QRectF plotArea, QString xla
         painter.drawText(QRectF(lt, rb), Qt::AlignCenter|Qt::AlignVCenter, QString::number(i*m_majorTick.x()));
     }
 
-    int tickTopIndex = ceil(m_plotRange.top()/m_majorTick.y());
-    int tickBottomIndex = floor(m_plotRange.bottom()/m_majorTick.y());
+    int tickTopIndex = static_cast<int>(ceil(m_plotRange.top()/m_majorTick.y()));
+    int tickBottomIndex = static_cast<int>(floor(m_plotRange.bottom()/m_majorTick.y()));
 
     for (int i = tickTopIndex; i <= tickBottomIndex; ++i) {
         QPointF p = translatePoint(QPointF(m_plotRange.left(), i*m_majorTick.y()), plotArea);
@@ -144,10 +144,10 @@ void SPAbstractPlooter::plotAxis(QPainter &painter, QRectF plotArea, QString xla
 
 void SPAbstractPlooter::plotGrid(QPainter &painter, QRectF plotArea, double alpha) const
 {
-    painter.setPen(QColor(0xC4, 0xC4, 0xC4, 0xff*alpha));
+    painter.setPen(QColor(0xC4, 0xC4, 0xC4, static_cast<int>(0xff*alpha)));
 
-    int tickLeftIndex = ceil(m_plotRange.left()/m_majorTick.x());
-    int tickRightIndex = floor(m_plotRange.right()/m_majorTick.x());
+    int tickLeftIndex = static_cast<int>(ceil(m_plotRange.left()/m_majorTick.x()));
+    int tickRightIndex = static_cast<int>(floor(m_plotRange.right()/m_majorTick.x()));
 
     for (int i = tickLeftIndex; i <= tickRightIndex; ++i) {
         QPointF lt = translatePoint(QPointF((i)*m_majorTick.x(), m_plotRange.top()), plotArea);
@@ -155,8 +155,8 @@ void SPAbstractPlooter::plotGrid(QPainter &painter, QRectF plotArea, double alph
         painter.drawLine(lt, rb);
     }
 
-    int tickTopIndex = ceil(m_plotRange.top()/m_majorTick.y());
-    int tickBottomIndex = floor(m_plotRange.bottom()/m_majorTick.y());
+    int tickTopIndex = static_cast<int>(ceil(m_plotRange.top()/m_majorTick.y()));
+    int tickBottomIndex = static_cast<int>(floor(m_plotRange.bottom()/m_majorTick.y()));
 
     for (int i = tickTopIndex; i <= tickBottomIndex; ++i) {
         QPointF lt = translatePoint(QPointF(m_plotRange.left(), (i)*m_majorTick.y()), plotArea);

@@ -26,7 +26,7 @@ class SimplePlotWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SimplePlotWidget(QWidget *parent = 0);
+    explicit SimplePlotWidget(QWidget *parent = nullptr);
 
     void setPlotter(const SPAbstractPlooter *plotter);
 

@@ -26,7 +26,7 @@ class SPAbstractPlooter : public QObject
 {
     Q_OBJECT
 public:
-    explicit SPAbstractPlooter(QObject *parent = 0);
+    explicit SPAbstractPlooter(QObject *parent = nullptr);
 
     virtual void plot(QPainter &painter, QRect area) const = 0;
     static qreal baseUnit(qreal length, int base = 5);
