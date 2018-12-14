@@ -22,6 +22,7 @@
 #include <QMainWindow>
 #include "spscatterplotter.h"
 #include "sphistogramplotter.h"
+#include "splineplotter.h"
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,7 @@ private:
 
     SPScatterPlotter scatterPlotter;
     SPHistogramPlotter histogramPlotter;
+    SPLinePlotter linePlotter;
 };
 
 #endif // MAINWINDOW_H

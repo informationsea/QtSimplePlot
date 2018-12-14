@@ -26,7 +26,7 @@
 #include "simpleplotcommon.h"
 
 SPScatterPlotter::SPScatterPlotter(QObject *parent) :
-    SPAbstractPlooter(parent), m_xlabel("X axis"), m_ylable("Y axis"), m_alpha(1)
+    SPAbstractPlooter(parent), m_alpha(1), m_xlabel("X axis"), m_ylable("Y axis")
 {
 
 }

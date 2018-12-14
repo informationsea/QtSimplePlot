@@ -42,15 +42,16 @@ signals:
 
 public slots:
 
-private:
+protected:
     QList<QPointF> m_data;
+    double m_alpha;
     QString m_xlabel;
     QString m_ylable;
 
-    double m_alpha;
+    virtual void plotData(QPainter &painter, QRectF area) const;
 
+private:
     static QRectF dataRange(const QList<QPointF> &data);
-    void plotData(QPainter &painter, QRectF area) const;
 };
 
 #endif // SPSCATTERPLOTTER_H
